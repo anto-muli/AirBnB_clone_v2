@@ -30,6 +30,7 @@ class Place(BaseModel, Base):
                          nullable=False)
         user_id = Column(String(60),
                          ForeignKey('users.id'),
+                         nullable=False)
         name = Column(String(128),
                       nullable=False)
         description = Column(String(1024),
@@ -81,7 +82,7 @@ class Place(BaseModel, Base):
         for review in values_review:
             if review.place_id == self.id:
                 list_review.append(review)
-	return list_review
+        return list_review
 
     if getenv('HBNB_TYPE_STORAGE') != 'db':
         @property
