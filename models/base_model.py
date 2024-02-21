@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-"""This module defines a base class for all models in our hbnb clone"""
-
 from datetime import datetime
 import models
 from sqlalchemy import Column, String, DateTime
@@ -26,16 +23,21 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """Initializes the base model"""
         self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
+        self.created_at = datetime.utcnow()
         self.updated_at = self.created_at
-        for key, value in kwargs.items():
-            if key == '__class__':
-                continue
-            setattr(self, key, value)
-            if type(self.created_at) is str:
-                self.created_at = datetime.strptime(self.created_at, time_fmt)
-            if type(self.updated_at) is str:
-                self.updated_at = datetime.strptime(self.updated_at, time_fmt)
+        if kwargs:
+            for key, value in kwargs.items():
+                if key == '__class__':
+                    continue
+                setattr(self, key, value)
+            try:
+                if 'created_at' in kwargs:
+                    self.created_at = datetime.strptime(kwargs['created_at'], time_fmt)
+                if 'updated_at' in kwargs:
+                    self.updated_at = datetime.strptime(kwargs['updated_at'], time_fmt)
+            except ValueError:
+                self.created_at = datetime.utcnow()
+                self.updated_at = self.created_at
 
     def __str__(self):
         """Returns a string representation of the instance"""
@@ -44,7 +46,7 @@ class BaseModel:
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
-        self.updated_at = datetime.now()
+        self.updated_at = datetime.utcnow()
         models.storage.new(self)
         models.storage.save()
 
