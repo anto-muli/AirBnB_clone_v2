@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""This module defines a class User"""
+""" holds class User"""
 import hashlib
 import models
 from models.base_model import BaseModel, Base
@@ -9,7 +9,7 @@ from sqlalchemy import Column, String
 
 
 class User(BaseModel, Base):
-    """This class defines a user by various attributes"""
+    """Representation of a user """
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         __tablename__ = 'users'
         email = Column(String(128),
@@ -27,20 +27,21 @@ class User(BaseModel, Base):
         reviews = relationship("Review",
                                backref="user",
                                cascade="all, delete-orphan")
-else:
-    email = ""
-    _password = ""
-    first_name = ""
-    last_name = ""
+    else:
+        email = ""
+        _password = ""
+        first_name = ""
+        last_name = ""
 
-def __init__(self, *args, **kwargs):
-    """Initialize user"""
-    super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        """initializes user"""
+        super().__init__(*args, **kwargs)
 
-@property
-def password(self):
-    return self._password
+    @property
+    def password(self):
+        return self._password
 
-@password(self, pwd):
-    """hashing password values"""
-    self._password = pwd
+    @password.setter
+    def password(self, pwd):
+        """hashing password values"""
+        self._password = pwd
